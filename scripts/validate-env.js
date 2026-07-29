@@ -97,10 +97,16 @@ if (!envUrl || !envKey) {
   console.error('   [ERRO] Conexão não pode ser testada por falta de variáveis de ambiente.');
   success = false;
 } else {
-  const restUrl = `${envUrl.replace(/\/$/, '')}/rest/v1/?apikey=${envKey}`;
+  const restUrl = `${envUrl.replace(/\/$/, '')}/rest/v1/`;
   
   try {
-    const response = await fetch(restUrl, { method: 'GET' });
+    const response = await fetch(restUrl, {
+      method: 'GET',
+      headers: {
+        'apikey': envKey,
+        'Authorization': `Bearer ${envKey}`
+      }
+    });
     if (response.ok) {
       console.log('   [OK] Conexão com o Supabase estabelecida com sucesso!');
     } else {

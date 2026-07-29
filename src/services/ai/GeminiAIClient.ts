@@ -10,9 +10,17 @@ export class GeminiAIClient implements AIClient {
     if (!apiKey) {
       throw new ConfigurationError('VITE_GEMINI_API_KEY não foi configurada no ambiente.');
     }
-
     try {
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelIdentifier}:generateContent?key=${apiKey}`;
+      let url = `https://generativelanguage.googleapis.com/v1beta/models/${modelIdentifier}:generateContent`;
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json'
+      };
+
+      if (apiKey.startsWith('AIzaSy')) {
+        url += `?key=${apiKey}`;
+      } else {
+        headers['Authorization'] = `Bearer ${apiKey}`;
+      }
 
       const body = {
         contents: [
@@ -32,12 +40,9 @@ export class GeminiAIClient implements AIClient {
 
       const response = await fetch(url, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers,
         body: JSON.stringify(body)
       });
-
       if (!response.ok) {
         const errorText = await response.text();
         throw new Error(`HTTP error ${response.status}: ${errorText}`);
