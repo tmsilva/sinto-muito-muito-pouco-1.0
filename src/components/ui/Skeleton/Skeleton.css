@@ -1,0 +1,11 @@
+.skeleton {
+  width: 100%;
+  height: 20px;
+  background-color: var(--color-surface);
+  border-radius: var(--radius-sm);
+  display: block;
+}
+
+.skeleton-circle {
+  border-radius: var(--radius-full);
+}

@@ -13,21 +13,29 @@ Este plano detalha o roteiro de engenharia técnica para as etapas subsequentes 
 - **Objetivos:** Estruturar todas as entidades de banco com convenções rígidas, chaves estrangeiras, índices e suporte a soft delete: `ai_models`, `ai_settings`, `excuse_tones`, `prompt_templates`, `application_settings`, `excuses` e `audit_logs`.
 - **Camada de Dados:** Criação de repositórios e serviços desacoplados para o acesso a essas entidades. RLS configurado e documentado.
 
-### Etapa 3: Design System e Estética Visual Premium
+### Etapa 3: Consolidação da Camada de Inteligência Artificial (Concluída)
+- **Objetivos:** Estruturar a camada de geração de desculpas acoplando repositórios e serviços com tipagem do domínio.
+- **Implementações:**
+  - Abstração de múltiplos provedores de IA (`AIClient` e `GeminiAIClient`).
+  - Cache reusável em memória (`MemoryCache` com TTL).
+  - Pipeline de geração de desculpas no `generationService` com auditorias de login/logout/geração automática.
+  - Decoupling total dos componentes visuais com a criação do `healthService`.
+
+### Etapa 4: Design System e Estética Visual Premium
 - **Objetivos:** Definir o visual premium da aplicação sem Tailwind, usando Vanilla CSS puro.
 - **Implementações:**
   - Configuração do `src/index.css` contendo variáveis CSS globais (paleta HSL harmônica de tons escuros, gradientes sofisticados e variáveis de espaçamento).
   - Integração da fonte Google Fonts (ex. *Outfit* ou *Plus Jakarta Sans*).
   - Desenvolvimento de micro-animações, efeitos hover interativos e elementos estilo glassmorphism.
 
-### Etapa 4: Gerador e Motor de Desculpas
+### Etapa 5: Gerador e Motor de Desculpas
 - **Objetivos:** Criar a experiência de seleção e geração.
 - **Componentes:**
   - Seletor de tom (Formal, Irônico, Dramático, Minimalista).
   - Seletor de categoria (Trabalho, Relacionamento, Atraso, Outros).
   - Fluxo de carregamento interativo com animações.
 
-### Etapa 5: Histórico ("Minhas Desculpas")
+### Etapa 6: Histórico ("Minhas Desculpas")
 - **Objetivos:** Gerenciar o histórico do usuário logado.
 - **Recursos:**
   - Grid de cards estilizados com ações de: Copiar para área de transferência, favoritar, compartilhar e remover do histórico.

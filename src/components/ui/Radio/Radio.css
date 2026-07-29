@@ -1,0 +1,61 @@
+.radio-container {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  cursor: pointer;
+  user-select: none;
+  font-family: var(--font-sans);
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+}
+
+.radio-input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.radio-circle {
+  width: 18px;
+  height: 18px;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+}
+
+.radio-inner {
+  width: 8px;
+  height: 8px;
+  background-color: transparent;
+  border-radius: var(--radius-full);
+  transition: all var(--transition-fast);
+  transform: scale(0);
+}
+
+.radio-input:checked ~ .radio-circle {
+  border-color: var(--color-primary);
+}
+
+.radio-input:checked ~ .radio-circle .radio-inner {
+  background-color: var(--color-primary);
+  transform: scale(1);
+}
+
+.radio-input:focus-visible ~ .radio-circle {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.radio-container:hover .radio-circle {
+  border-color: var(--color-border-hover);
+}
+
+.radio-container-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

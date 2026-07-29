@@ -1,0 +1,90 @@
+.dropdown-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 8px;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-2);
+  min-width: 220px;
+  box-shadow: var(--shadow-lg);
+  z-index: var(--z-index-dropdown);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  animation: dropdownFadeIn var(--transition-fast) forwards;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  width: 100%;
+  padding: var(--spacing-2) var(--spacing-3);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-muted);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-sm);
+  text-align: left;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-decoration: none;
+}
+
+.dropdown-item:hover {
+  background-color: var(--color-card-hover);
+  color: var(--color-text);
+}
+
+.dropdown-item-danger {
+  color: var(--color-danger);
+}
+
+.dropdown-item-danger:hover {
+  background-color: var(--color-danger-bg);
+  color: var(--color-danger);
+}
+
+.dropdown-divider {
+  height: 1px;
+  background-color: var(--color-border);
+  margin: var(--spacing-1) 0;
+}
+
+/* Mobile Drawer Behavior */
+@media (max-width: 767px) {
+  .dropdown-menu {
+    position: fixed;
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    border-bottom: none;
+    padding: var(--spacing-5) var(--spacing-4) var(--spacing-8) var(--spacing-4);
+    margin-top: 0;
+    box-shadow: 0 -10px 25px -5px rgba(0, 0, 0, 0.4);
+    animation: slideInBottom var(--transition-normal) forwards;
+    z-index: var(--z-index-modal);
+  }
+  
+  .dropdown-backdrop-mobile {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(9, 9, 11, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: var(--z-index-modal-backdrop);
+  }
+}

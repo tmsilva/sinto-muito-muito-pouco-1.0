@@ -1,10 +1,11 @@
 import { supabase } from '../services/supabaseClient';
+import type { AISettings } from '../types/domain.types';
 
 export const aiSettingsRepository = {
   /**
    * Retrieves the latest active global AI configuration settings.
    */
-  async getLatest() {
+  async getLatest(): Promise<AISettings | null> {
     const { data, error } = await (supabase.from('ai_settings' as any) as any)
       .select('*')
       .is('deleted_at', null)
@@ -13,7 +14,7 @@ export const aiSettingsRepository = {
       .maybeSingle();
 
     if (error) throw error;
-    return data;
+    return data as AISettings | null;
   },
 
   /**
@@ -26,7 +27,7 @@ export const aiSettingsRepository = {
     max_tokens: number;
     timeout_ms: number;
     system_prompt: string;
-  }) {
+  }): Promise<AISettings> {
     const payload = {
       ...settings,
       updated_at: new Date().toISOString()
@@ -38,6 +39,6 @@ export const aiSettingsRepository = {
       .single();
 
     if (error) throw error;
-    return data;
+    return data as AISettings;
   }
 };

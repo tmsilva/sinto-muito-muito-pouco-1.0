@@ -21,8 +21,14 @@ vi.mock('../services/supabaseClient', () => {
       const mockQueryBuilder = {
         select: vi.fn().mockReturnThis(),
         eq: vi.fn().mockReturnThis(),
+        is: vi.fn().mockReturnThis(),
+        order: vi.fn().mockReturnThis(),
+        limit: vi.fn().mockReturnThis(),
         single: vi.fn().mockReturnThis(),
+        maybeSingle: vi.fn().mockReturnThis(),
         upsert: vi.fn().mockReturnThis(),
+        insert: vi.fn().mockReturnThis(),
+        update: vi.fn().mockReturnThis(),
       };
       return mockQueryBuilder;
     }),

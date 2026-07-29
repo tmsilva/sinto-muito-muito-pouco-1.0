@@ -1,10 +1,11 @@
 import { supabase } from '../services/supabaseClient';
+import type { ApplicationSetting } from '../types/domain.types';
 
 export const applicationSettingsRepository = {
   /**
    * Retrieves a setting record by its key.
    */
-  async getByKey(key: string) {
+  async getByKey(key: string): Promise<ApplicationSetting | null> {
     const { data, error } = await (supabase.from('application_settings' as any) as any)
       .select('*')
       .eq('key', key)
@@ -12,7 +13,7 @@ export const applicationSettingsRepository = {
       .maybeSingle();
 
     if (error) throw error;
-    return data;
+    return data as ApplicationSetting | null;
   },
 
   /**
@@ -23,7 +24,7 @@ export const applicationSettingsRepository = {
     value: string;
     type?: string;
     description?: string;
-  }) {
+  }): Promise<ApplicationSetting> {
     const payload = {
       ...setting,
       updated_at: new Date().toISOString()
@@ -35,6 +36,6 @@ export const applicationSettingsRepository = {
       .single();
 
     if (error) throw error;
-    return data;
+    return data as ApplicationSetting;
   }
 };

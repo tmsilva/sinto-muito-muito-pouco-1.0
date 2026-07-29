@@ -1,0 +1,41 @@
+.chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-sans);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  height: 36px;
+  padding: 0 var(--spacing-4);
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border);
+  background-color: var(--color-surface);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  user-select: none;
+  outline: none;
+}
+
+.chip:hover:not(:disabled) {
+  border-color: var(--color-border-hover);
+  color: var(--color-text);
+  transform: translateY(-1px);
+}
+
+.chip-active {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-primary-inverse);
+  font-weight: var(--font-weight-semibold);
+}
+
+.chip-active:hover:not(:disabled) {
+  opacity: 0.9;
+  color: var(--color-primary-inverse);
+}
+
+.chip:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

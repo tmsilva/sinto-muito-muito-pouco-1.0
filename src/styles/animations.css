@@ -1,0 +1,85 @@
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(4px); }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideInBottom {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+@keyframes dropdownFadeIn {
+  from { opacity: 0; transform: scale(0.95) translateY(-4px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.animate-fade-in {
+  animation: fadeIn var(--transition-normal) forwards;
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    #18181b 25%,
+    #27272a 37%,
+    #18181b 63%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite linear;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight var(--transition-normal) forwards;
+}
+
+.animate-slide-in-bottom {
+  animation: slideInBottom var(--transition-normal) forwards;
+}
+
+.animate-dropdown {
+  animation: dropdownFadeIn var(--transition-fast) forwards;
+}
+
+.transition-all {
+  transition: all var(--transition-normal);
+}
+
+.hover-scale:hover {
+  transform: scale(1.02);
+}
+
+.press-scale:active {
+  transform: scale(0.98);
+}

@@ -1,10 +1,11 @@
 import { supabase } from '../services/supabaseClient';
+import type { AIModel } from '../types/domain.types';
 
 export const aiModelsRepository = {
   /**
    * Retrieves all active and non-deprecated AI models sorted by sort_order.
    */
-  async getAllActive() {
+  async getAllActive(): Promise<AIModel[]> {
     const { data, error } = await (supabase.from('ai_models' as any) as any)
       .select('*')
       .eq('is_active', true)
@@ -13,13 +14,13 @@ export const aiModelsRepository = {
       .order('sort_order', { ascending: true });
 
     if (error) throw error;
-    return data || [];
+    return (data as AIModel[]) || [];
   },
 
   /**
    * Retrieves a model by its ID.
    */
-  async getById(id: string) {
+  async getById(id: string): Promise<AIModel | null> {
     const { data, error } = await (supabase.from('ai_models' as any) as any)
       .select('*')
       .eq('id', id)
@@ -29,6 +30,6 @@ export const aiModelsRepository = {
       if (error.code === 'PGRST116') return null;
       throw error;
     }
-    return data;
+    return data as AIModel;
   }
 };

@@ -1,79 +1,43 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
-import { authService } from '../services/authService';
-import { supabase } from '../services/supabaseClient';
-import pkg from '../../package.json';
+import { healthService } from '../services/healthService';
+import type { HealthCheckResult } from '../services/healthService';
 
 export const Health: React.FC = () => {
   const { user, session } = useAuth();
-  const [dbConnected, setDbConnected] = useState<boolean | null>(null);
-  const [supabaseConnected, setSupabaseConnected] = useState<boolean | null>(null);
-  const [profileFound, setProfileFound] = useState<boolean | null>(null);
-  const [rolesFound, setRolesFound] = useState<string[] | null>(null);
-  const [envValid, setEnvValid] = useState<boolean>(false);
+  const [diagnostics, setDiagnostics] = useState<HealthCheckResult | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    // Check environment variables
-    const url = import.meta.env.VITE_SUPABASE_URL;
-    const key = import.meta.env.VITE_SUPABASE_ANON_KEY;
-    const isValid = !!(url && key);
-    setEnvValid(isValid);
-
-    if (!isValid) {
-      setDbConnected(false);
-      setSupabaseConnected(false);
-      setProfileFound(false);
-      setRolesFound([]);
+    const runCheck = async () => {
+      setLoading(true);
+      const res = await healthService.runDiagnostics(user, session);
+      setDiagnostics(res);
       setLoading(false);
-      return;
-    }
-
-    const checkSystemHealth = async () => {
-      try {
-        // Check connection by reading from roles table
-        const { error: rolesError } = await supabase.from('roles').select('id').limit(1);
-        if (rolesError && rolesError.code !== 'PGRST116') {
-          throw rolesError;
-        }
-        setDbConnected(true);
-        setSupabaseConnected(true);
-
-        // Check profile and roles if user is authenticated
-        if (user) {
-          const profile = await authService.getProfile(user.id);
-          setProfileFound(!!profile);
-
-          const roles = await authService.getUserRoles(user.id);
-          setRolesFound(roles);
-        } else {
-          setProfileFound(null);
-          setRolesFound(null);
-        }
-      } catch (err) {
-        console.error('Connection health check failed:', err);
-        setDbConnected(false);
-        setSupabaseConnected(false);
-        setProfileFound(false);
-        setRolesFound([]);
-      } finally {
-        setLoading(false);
-      }
     };
 
-    checkSystemHealth();
-  }, [user]);
+    runCheck();
+  }, [user, session]);
 
-  // Calculate health score based on 8 check points
+  if (loading || !diagnostics) {
+    return (
+      <div style={{ padding: '2rem', fontFamily: 'monospace', maxWidth: '800px', margin: '0 auto', color: '#333' }}>
+        <h1>Dashboard de Diagnóstico da Infraestrutura</h1>
+        <hr />
+        <p>Carregando diagnósticos...</p>
+      </div>
+    );
+  }
+
   const checks = [
-    { name: 'Variáveis de ambiente válidas', status: envValid },
-    { name: 'Supabase conectado', status: supabaseConnected },
-    { name: 'Banco conectado', status: dbConnected },
-    { name: 'Sessão ativa', status: !!session },
-    { name: 'Usuário autenticado', status: !!user },
-    { name: 'Profile encontrado', status: profileFound },
-    { name: 'Role encontrada', status: !!(rolesFound && rolesFound.length > 0) },
-    { name: 'Build compatível', status: true } // Static success if this page is rendered
+    { name: 'Variáveis de ambiente válidas', status: diagnostics.envValid },
+    { name: 'Supabase conectado', status: diagnostics.supabaseConnected },
+    { name: 'Banco conectado', status: diagnostics.dbConnected },
+    { name: 'Sessão ativa', status: diagnostics.sessionActive },
+    { name: 'Usuário autenticado', status: diagnostics.userAuthenticated },
+    { name: 'Profile encontrado', status: diagnostics.profileFound },
+    { name: 'Role encontrada', status: !!(diagnostics.rolesFound && diagnostics.rolesFound.length > 0) },
+    { name: 'Build compatível', status: diagnostics.buildStatus }
   ];
 
   const successfulChecks = checks.filter(c => c.status === true).length;
@@ -87,24 +51,20 @@ export const Health: React.FC = () => {
 
       <h2>1. Metadados da Aplicação</h2>
       <ul>
-        <li><strong>Versão da aplicação (package.json):</strong> {pkg.version}</li>
-        <li><strong>Última migration aplicada (informativa):</strong> 20260729000000_init.sql</li>
-        <li><strong>Quantidade de testes executados:</strong> 7 testes unitários (Vitest)</li>
+        <li><strong>Versão da aplicação (package.json):</strong> {diagnostics.version}</li>
+        <li><strong>Última migration aplicada (informativa):</strong> 20260729000007_audit_logs.sql</li>
+        <li><strong>Quantidade de testes executados:</strong> {diagnostics.testCount} testes unitários (Vitest)</li>
         <li><strong>Resultado do último build:</strong> 🟢 Sucesso</li>
       </ul>
 
       <h2>2. Status das Verificações</h2>
-      {loading ? (
-        <p>Carregando diagnósticos...</p>
-      ) : (
-        <ul>
-          {checks.map((check, idx) => (
-            <li key={idx} style={{ marginBottom: '8px' }}>
-              {check.status === true ? '🟢' : check.status === false ? '🔴' : '🟡'} <strong>{check.name}</strong>
-            </li>
-          ))}
-        </ul>
-      )}
+      <ul>
+        {checks.map((check, idx) => (
+          <li key={idx} style={{ marginBottom: '8px' }}>
+            {check.status === true ? '🟢' : check.status === false ? '🔴' : '🟡'} <strong>{check.name}</strong>
+          </li>
+        ))}
+      </ul>
 
       <h2>3. Pontuação de Saúde (Health Score)</h2>
       <div style={{ 
@@ -137,7 +97,7 @@ export const Health: React.FC = () => {
           <tr>
             <td><strong>Database (Banco)</strong></td>
             <td>Conexão e leitura de tabelas de banco de dados (`roles`)</td>
-            <td>{dbConnected ? 'Leitura de tabelas respondendo com sucesso' : 'Erro de conexão/tabela'}</td>
+            <td>{diagnostics.dbConnected ? 'Leitura de tabelas respondendo com sucesso' : 'Erro de conexão/tabela'}</td>
           </tr>
           <tr>
             <td><strong>Routes (Rotas)</strong></td>

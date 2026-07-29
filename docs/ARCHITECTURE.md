@@ -32,12 +32,14 @@ graph TD
 Para assegurar manutenibilidade, a infraestrutura separa estritamente as obrigações:
 
 1. **Cliente Supabase (`src/services/supabaseClient.ts`):** Instancia única do SDK `@supabase/supabase-js`, tipada com o esquema do banco de dados.
-2. **Serviços (`src/services/authService.ts`):** Camada de dados responsável por interagir diretamente com a API do Supabase (operações de Sign In, Sign Up, consultas e updates nas tabelas `profiles` e `user_roles`).
-3. **Contexto de Autenticação (`src/contexts/AuthContext.tsx`):** Registra e sincroniza a sessão e dados diretos do usuário autenticado no Supabase. **Não** armazena dados de regras de negócio, tabelas auxiliares de perfil ou permissões RBAC.
-4. **Guarda de Rotas (`src/routes/`):**
+2. **Repositórios (`src/repositories/`):** Camada de acesso direto ao Supabase. Não contêm regras de negócio e retornam os registros tipados conforme a especificação do domínio em `domain.types.ts`.
+3. **Serviços (`src/services/`):** Concentram a lógica de negócio, tratamento padronizado de exceções (`errors.ts`), consumo de caches em memória e orquestração de logs de auditoria (`auditLogsService`).
+4. **Provedores de IA (`src/services/ai/`):** Abstração através da interface `AIClient` e da classe `GeminiAIClient` que gerenciam a comunicação externa com modelos de linguagem. O provedor ativo é resolvido dinamicamente via `aiClientFactory`.
+5. **Contexto de Autenticação (`src/contexts/AuthContext.tsx`):** Registra e sincroniza a sessão e dados diretos do usuário autenticado no Supabase.
+6. **Guarda de Rotas (`src/routes/`):**
    - `ProtectedRoute`: Bloqueia o acesso a rotas privadas caso a sessão do usuário no `AuthContext` esteja vazia.
-   - `AdminRoute`: Bloqueia o acesso a rotas administrativas consultando assincronamente na base de dados (via `authService`) se o usuário autenticado possui a role `admin`.
-5. **Painel de Diagnóstico (`src/pages/Health.tsx`):** Rota de monitoramento que verifica a integridade de variáveis locais, conexão ativa com a Rest API, autenticação e roles de banco.
+   - `AdminRoute`: Bloqueia o acesso a rotas administrativas consultando assincronamente na base de dados se o usuário autenticado possui a role `admin`.
+7. **Serviço de Diagnósticos (`src/services/healthService.ts`):** Centraliza as checagens técnicas e estatísticas, permitindo que a view `/health` consulte exclusivamente este serviço e remova dependências diretas de banco de dados na camada de interface.
 
 ---
 

@@ -1,10 +1,11 @@
 import { supabase } from '../services/supabaseClient';
+import type { PromptTemplate } from '../types/domain.types';
 
 export const promptTemplatesRepository = {
   /**
    * Retrieves the active prompt template by name.
    */
-  async getActiveByName(name: string) {
+  async getActiveByName(name: string): Promise<PromptTemplate | null> {
     const { data, error } = await (supabase.from('prompt_templates' as any) as any)
       .select('*')
       .eq('name', name)
@@ -15,13 +16,13 @@ export const promptTemplatesRepository = {
       .maybeSingle();
 
     if (error) throw error;
-    return data;
+    return data as PromptTemplate | null;
   },
 
   /**
    * Retrieves all versions of a prompt template by name.
    */
-  async getVersions(name: string) {
+  async getVersions(name: string): Promise<PromptTemplate[]> {
     const { data, error } = await (supabase.from('prompt_templates' as any) as any)
       .select('*')
       .eq('name', name)
@@ -29,7 +30,7 @@ export const promptTemplatesRepository = {
       .order('version', { ascending: false });
 
     if (error) throw error;
-    return data || [];
+    return (data as PromptTemplate[]) || [];
   },
 
   /**
@@ -43,7 +44,7 @@ export const promptTemplatesRepository = {
     system_prompt: string;
     user_prompt: string;
     created_by?: string;
-  }) {
+  }): Promise<PromptTemplate> {
     const payload = {
       ...template,
       updated_at: new Date().toISOString()
@@ -55,6 +56,6 @@ export const promptTemplatesRepository = {
       .single();
 
     if (error) throw error;
-    return data;
+    return data as PromptTemplate;
   }
 };

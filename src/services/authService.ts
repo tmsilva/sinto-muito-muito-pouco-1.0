@@ -1,4 +1,5 @@
 import { supabase } from './supabaseClient';
+import { auditLogsRepository } from '../repositories/auditLogsRepository';
 import type { Database } from '../types/database.types';
 
 type ProfileRow = Database['public']['Tables']['profiles']['Row'];
@@ -26,6 +27,17 @@ export const authService = {
       password,
     });
     if (error) throw error;
+    
+    if (data?.user) {
+      await auditLogsRepository.log({
+        user_id: data.user.id,
+        entity: 'auth',
+        entity_id: data.user.id,
+        action: 'LOGIN',
+        metadata: { email: data.user.email }
+      }).catch(err => console.error('Failed to log login audit:', err));
+    }
+
     return data;
   },
 
@@ -33,6 +45,20 @@ export const authService = {
    * Signs out the current user.
    */
   async signOut() {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        await auditLogsRepository.log({
+          user_id: user.id,
+          entity: 'auth',
+          entity_id: user.id,
+          action: 'LOGOUT',
+          metadata: { email: user.email }
+        }).catch(err => console.error('Failed to log logout audit:', err));
+      }
+    } catch (e) {
+      // Ignored
+    }
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
   },

@@ -1,0 +1,12 @@
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-8) var(--spacing-4);
+  width: 100%;
+  gap: var(--spacing-3);
+  font-family: var(--font-sans);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}

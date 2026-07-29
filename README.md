@@ -14,7 +14,7 @@ Certifique-se de possuir o [Node.js](https://nodejs.org/) instalado em sua máqu
    ```bash
    cp .env.example .env.local
    ```
-2. Insira suas credenciais do Supabase (`VITE_SUPABASE_URL` e `VITE_SUPABASE_ANON_KEY`).
+2. Insira suas credenciais do Supabase (`VITE_SUPABASE_URL` e `VITE_SUPABASE_ANON_KEY`) e chaves da IA (`VITE_AI_PROVIDER` e `VITE_GEMINI_API_KEY`).
 
 3. Instale as dependências:
    ```bash

@@ -33,3 +33,19 @@ Toda alteração relevante a este projeto será registrada neste arquivo.
 - **Camada de Repositório (`src/repositories/`):** Estruturação do acesso ao banco através de repositórios independentes (`aiModelsRepository`, `aiSettingsRepository`, `excuseTonesRepository`, `promptTemplatesRepository`, `applicationSettingsRepository`, `excusesRepository`, `auditLogsRepository`).
 - **Camada de Serviços (`src/services/`):** Serviços desacoplados contendo as chamadas que consomem as instâncias da camada de repositório.
 - **Segurança (RLS):** Criação e documentação detalhada de todas as políticas de controle de acesso no nível de linha (RLS) nas novas tabelas.
+
+---
+
+## [1.2.0] - 2026-07-29
+
+### Adicionado
+- **Abstração AIClient e Provedores:** Contrato `AIClient` e o provedor `GeminiAIClient` (via REST `fetch` nativo) isolando conexões com APIs externas.
+- **Orquestrador de IA (`generationService`):** Pipeline completo de geração de desculpas acoplado a cache, persistência de histórico (com tempos de resposta e erros de falhas) e auditoria de log.
+- **Cache Global Reutilizável (`MemoryCache`):** Utilitário genérico com suporte a tempo de expiração (TTL) e invalidação manual para diminuir leituras recorrentes de banco.
+- **Tratamento de Erros e Respostas Consistentes:** Mapeamento de erros amigáveis (`AIError`, `ValidationError`, etc.) e formato padronizado `ServiceResponse<T>` para retorno de dados e estados de loading.
+- **Auditorias Automáticas:** Registro automático de auditoria para os eventos de `LOGIN`, `LOGOUT` e `GERAÇÃO_DE_DESCULPA` utilizando `auditLogsService`.
+- **Configurações Globais:** Mapeamento das chaves de ambiente `VITE_AI_PROVIDER` e `VITE_GEMINI_API_KEY` em `.env.example`.
+- **Gestão Administrativa de Tons (`excuse_tones`):** Desenvolvida a área de gerenciamento completo no Painel Admin (`AdminDashboard.tsx`) permitindo listar, criar, editar, alternar status (Ativo/Inativo) e excluir tons de desculpas com invalidação instantânea de cache no frontend.
+- **Povoamento de Banco (Seed):** Adicionado botão de ação rápida para popular a tabela `excuse_tones` no banco de dados com a lista padrão de tons.
+- **Migration RLS:** Criada a migration `20260729000008_allow_anon_read_tones.sql` liberando leitura pública dos tons ativos para visitantes anônimos.
+

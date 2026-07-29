@@ -19,7 +19,9 @@ Nesta etapa inicial de infraestrutura, os seguintes módulos técnicos foram est
 - **Validação de Ambiente:** Script automatizado (`scripts/validate-env.js`) para assegurar as configurações corretas de ambiente de desenvolvimento.
 - **Painel de Diagnóstico (/health):** Rota de desenvolvimento para auditar a integridade da aplicação (variáveis de ambiente, conexão Supabase, sessão ativa, profile, roles e build).
 - **Modelagem de Domínio Completa:** Mapeamento estrutural das entidades de banco com RLS e convenções rígidas: `ai_models`, `ai_settings`, `excuse_tones`, `prompt_templates`, `application_settings`, `excuses` e `audit_logs`.
-- **Camada de Repositórios e Serviços:** Implementação da camada repository em `src/repositories/` e services em `src/services/` isolando chamadas Supabase da regra de negócio.
+- **Camada de Persistência e Serviços:** Implementação da camada repository em `src/repositories/` e services em `src/services/` isolando chamadas Supabase da regra de negócio.
+- **Consolidação da IA & AIClient Abstraction:** Criação da interface desacoplada `AIClient` com a implementação `GeminiAIClient` via chamadas HTTP nativas e do `generationService` gerenciando o pipeline completo de geração (carregar parâmetros, criar prompts, disparar a chamada, gravar históricos com tempo e logs de auditoria).
+- **Cache Reutilizável & HealthService:** cache em memória genérico com TTL (`MemoryCache`) e centralização dos diagnósticos em `healthService` removendo dependências diretas de banco das views React.
 
 ---
 
