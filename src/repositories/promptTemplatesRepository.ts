@@ -34,6 +34,29 @@ export const promptTemplatesRepository = {
   },
 
   /**
+   * Retrieves all distinct template definitions (latest version of each family).
+   */
+  async getAllLatest(): Promise<PromptTemplate[]> {
+    const { data, error } = await (supabase.from('prompt_templates' as any) as any)
+      .select('*')
+      .is('deleted_at', null)
+      .order('name', { ascending: true })
+      .order('version', { ascending: false });
+
+    if (error) throw error;
+
+    const distinct: PromptTemplate[] = [];
+    const seen = new Set<string>();
+    for (const item of (data as PromptTemplate[] || [])) {
+      if (!seen.has(item.name)) {
+        seen.add(item.name);
+        distinct.push(item);
+      }
+    }
+    return distinct;
+  },
+
+  /**
    * Saves a new version or new prompt template.
    */
   async save(template: {
@@ -54,8 +77,21 @@ export const promptTemplatesRepository = {
       .insert(payload)
       .select()
       .single();
-
     if (error) throw error;
     return data as PromptTemplate;
+  },
+
+  /**
+   * Soft deletes a prompt template family by name.
+   */
+  async deleteByName(name: string): Promise<void> {
+    const { error } = await (supabase.from('prompt_templates' as any) as any)
+      .update({
+        deleted_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      })
+      .eq('name', name);
+
+    if (error) throw error;
   }
 };

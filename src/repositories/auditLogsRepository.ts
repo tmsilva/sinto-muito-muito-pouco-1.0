@@ -14,23 +14,27 @@ export interface AuditLogPayload {
 
 export const auditLogsRepository = {
   /**
-   * Inserts an audit log record into the database.
+   * Inserts an audit log record into the database without needing SELECT readback permissions.
    */
-  async log(payload: AuditLogPayload): Promise<AuditLog> {
+  async log(payload: AuditLogPayload): Promise<AuditLog | null> {
     const sanitizedPayload = {
-      ...payload,
-      user_id: isValidUUID(payload.user_id) ? payload.user_id : undefined,
-      entity_id: isValidUUID(payload.entity_id) ? payload.entity_id : undefined,
-      metadata: payload.metadata || {}
+      entity: payload.entity,
+      action: payload.action,
+      user_id: isValidUUID(payload.user_id) ? payload.user_id : null,
+      entity_id: isValidUUID(payload.entity_id) ? payload.entity_id : null,
+      metadata: payload.metadata || {},
+      ip_address: payload.ip_address || null,
+      user_agent: payload.user_agent || null
     };
 
     const { data, error } = await (supabase.from('audit_logs' as any) as any)
-      .insert(sanitizedPayload)
-      .select()
-      .single();
+      .insert(sanitizedPayload);
 
-    if (error) throw error;
-    return data as AuditLog;
+    if (error) {
+      console.warn('Audit log write skipped:', error.message);
+      return null;
+    }
+    return (data?.[0] as AuditLog) || null;
   },
 
   /**

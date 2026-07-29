@@ -7,6 +7,8 @@ export interface AIModel {
   is_active: boolean;
   is_deprecated: boolean;
   sort_order: number;
+  context_window?: number;
+  max_tokens_limit?: number;
   created_at: string;
   updated_at: string;
   deleted_at: string | null;

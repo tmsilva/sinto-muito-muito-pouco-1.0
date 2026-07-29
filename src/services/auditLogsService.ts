@@ -8,7 +8,7 @@ export const auditLogsService = {
   /**
    * Logs a user or system activity event.
    */
-  async writeLog(payload: AuditLogPayload): Promise<ServiceResponse<AuditLog>> {
+  async writeLog(payload: AuditLogPayload): Promise<ServiceResponse<AuditLog | null>> {
     try {
       const logged = await auditLogsRepository.log(payload);
       return createSuccessResponse(logged);
