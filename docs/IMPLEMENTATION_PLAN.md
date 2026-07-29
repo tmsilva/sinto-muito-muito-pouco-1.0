@@ -6,14 +6,12 @@ Este plano detalha o roteiro de engenharia técnica para as etapas subsequentes 
 
 ## Roadmap Técnico
 
-### Etapa 2: Banco de Dados de Conteúdo e RLS Avançado
-- **Objetivos:** Estruturar as tabelas que suportarão o fluxo principal do gerador.
-- **Tabelas a criar:**
-  - `public.apologies`: Tabela de desculpas padrão inseridas por administradores.
-  - `public.generated_excuses`: Histórico de desculpas salvas ou criadas por usuários (com colunas `title`, `message`, `favorite`, `created_by`).
-- **Configurações de RLS:**
-  - Apenas administradores cadastrados podem inserir/atualizar/deletar na tabela `apologies`.
-  - Usuários autenticados podem interagir apenas com seus próprios registros em `generated_excuses`.
+### Etapa 1: Validação da Infraestrutura (Concluída)
+- **Objetivos:** Estabelecer a fundação React/TS/Vite, cliente do Supabase, migrations RLS, ciclo isolado do `AuthContext`, roteamento RBAC, testes de unidade e o painel diagnóstico `/health`.
+
+### Etapa 2: Modelagem Completa do Domínio (Concluída)
+- **Objetivos:** Estruturar todas as entidades de banco com convenções rígidas, chaves estrangeiras, índices e suporte a soft delete: `ai_models`, `ai_settings`, `excuse_tones`, `prompt_templates`, `application_settings`, `excuses` e `audit_logs`.
+- **Camada de Dados:** Criação de repositórios e serviços desacoplados para o acesso a essas entidades. RLS configurado e documentado.
 
 ### Etapa 3: Design System e Estética Visual Premium
 - **Objetivos:** Definir o visual premium da aplicação sem Tailwind, usando Vanilla CSS puro.

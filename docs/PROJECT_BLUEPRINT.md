@@ -17,6 +17,9 @@ Nesta etapa inicial de infraestrutura, os seguintes módulos técnicos foram est
 - **Ciclo de Autenticação Limpo:** Criação do `AuthContext` apartando o controle de ciclo de sessão de autenticação do Supabase do gerenciamento de perfis e RBAC.
 - **Roteamento Protegido:** Guarda de rotas no frontend (`ProtectedRoute` e `AdminRoute`) para validar sessões ativas e papéis administrativos dinamicamente.
 - **Validação de Ambiente:** Script automatizado (`scripts/validate-env.js`) para assegurar as configurações corretas de ambiente de desenvolvimento.
+- **Painel de Diagnóstico (/health):** Rota de desenvolvimento para auditar a integridade da aplicação (variáveis de ambiente, conexão Supabase, sessão ativa, profile, roles e build).
+- **Modelagem de Domínio Completa:** Mapeamento estrutural das entidades de banco com RLS e convenções rígidas: `ai_models`, `ai_settings`, `excuse_tones`, `prompt_templates`, `application_settings`, `excuses` e `audit_logs`.
+- **Camada de Repositórios e Serviços:** Implementação da camada repository em `src/repositories/` e services em `src/services/` isolando chamadas Supabase da regra de negócio.
 
 ---
 

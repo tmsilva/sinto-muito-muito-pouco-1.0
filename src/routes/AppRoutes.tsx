@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Home } from '../pages/Home';
 import { Login } from '../pages/Login';
+import { Health } from '../pages/Health';
 import { AdminDashboard } from '../pages/AdminDashboard';
 import { ProtectedRoute } from './ProtectedRoute';
 import { AdminRoute } from './AdminRoute';
@@ -15,6 +16,7 @@ export const AppRoutes: React.FC = () => {
           {/* Public routes */}
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/health" element={<Health />} />
 
           {/* Protected generic user routes */}
           <Route element={<ProtectedRoute />}>

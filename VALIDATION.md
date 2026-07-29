@@ -64,3 +64,12 @@ npm run validate-env
 2. No painel do Supabase, associe seu usuário ao papel `admin` na tabela `user_roles` (veja instruções no arquivo `SETUP.md`).
 3. Retorne ao aplicativo e clique em **Ir para Painel Admin** ou acesse `/admin`.
    *Resultado esperado: O painel administrativo vermelho "Painel Administrativo" será renderizado sem redirecionamentos.*
+
+### Passo 6: Dashboard de Diagnóstico (/health)
+1. Inicie a aplicação localmente: `npm run dev`.
+2. Abra o navegador e acesse `http://localhost:5173/health`.
+3. *Resultado esperado: O painel exibirá as informações da infraestrutura. Valide os seguintes itens:*
+   - **Metadados:** Versão correspondente no `package.json` (0.0.0), indicando que 7 testes unitários passaram e status do build (sucesso).
+   - **Pontuação (Health Score):** O score será calculado dinamicamente. Se você estiver deslogado, o score será de 62% ou 75% (com "Sessão ativa", "Usuário autenticado", "Profile encontrado" e "Role encontrada" desligados). Ao fazer login e configurar os registros, o score subirá para 100%.
+   - **Componentes:** Status dos blocos de Auth, Database, Routes e Services exibidos e operacionais.
+

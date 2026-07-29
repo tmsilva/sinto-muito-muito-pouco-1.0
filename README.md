@@ -31,6 +31,8 @@ Certifique-se de possuir o [Node.js](https://nodejs.org/) instalado em sua máqu
    npm run dev
    ```
 
+6. Acesse a rota de diagnósticos técnicos `/health` para visualizar o status de integridade do ambiente.
+
 ---
 
 ## 📁 Estrutura de Documentos

@@ -37,6 +37,7 @@ Para assegurar manutenibilidade, a infraestrutura separa estritamente as obriga�
 4. **Guarda de Rotas (`src/routes/`):**
    - `ProtectedRoute`: Bloqueia o acesso a rotas privadas caso a sessão do usuário no `AuthContext` esteja vazia.
    - `AdminRoute`: Bloqueia o acesso a rotas administrativas consultando assincronamente na base de dados (via `authService`) se o usuário autenticado possui a role `admin`.
+5. **Painel de Diagnóstico (`src/pages/Health.tsx`):** Rota de monitoramento que verifica a integridade de variáveis locais, conexão ativa com a Rest API, autenticação e roles de banco.
 
 ---
 
@@ -49,3 +50,34 @@ A arquitetura do banco de dados no Supabase conta com três tabelas essenciais o
 - **`public.user_roles`:** Tabela associativa (muitos-para-muitos) ligando usuários a seus papéis na plataforma.
 
 A segurança é reforçada em nível de linha (Row Level Security) e pela função `is_admin()`, que encapsula consultas a roles de forma segura usando o modificador `SECURITY DEFINER`.
+
+---
+
+## 4. Convenções Estruturais de Banco de Dados
+
+Todas as novas tabelas de domínio criadas no projeto seguem rigorosamente as seguintes convenções:
+- **Chave Primária (PK):** Tipo `UUID` gerada automaticamente via `gen_random_uuid()`.
+- **Campos de Auditoria:** `created_at` e `updated_at` do tipo `timestamptz` preenchidos por padrão no banco.
+- **Suporte a Soft Delete:** Coluna `deleted_at` do tipo `timestamptz` (com índice `idx_<tabela>_deleted_at` para otimização de consultas de filtragem).
+- **Padronização Visual:** Nomenclaturas em `snake_case`.
+- **Constraints Padronizadas:**
+  - Chaves estrangeiras nomeadas como `fk_<tabela>_<coluna>`.
+  - Constraints exclusivas nomeadas como `uq_<tabela>_<coluna>`.
+- **Índices Padronizados:** Nomeados como `idx_<tabela>_<coluna>`.
+
+---
+
+## 5. Políticas de Row Level Security (RLS)
+
+A tabela abaixo descreve as regras de segurança aplicadas às novas entidades de domínio:
+
+| Tabela | Política | SELECT (Leitura) | INSERT (Escrita) | UPDATE (Atualização) | DELETE (Exclusão) |
+|---|---|---|---|---|---|
+| `ai_models` | "Permitir para autenticados / admin" | Usuários autenticados (apenas ativos) | Apenas Admin | Apenas Admin | Apenas Admin |
+| `ai_settings` | "Permitir para autenticados / admin" | Usuários autenticados (apenas ativos) | Apenas Admin | Apenas Admin | Apenas Admin |
+| `excuse_tones` | "Permitir para autenticados / admin" | Usuários autenticados (apenas ativos) | Apenas Admin | Apenas Admin | Apenas Admin |
+| `prompt_templates` | "Permitir para autenticados / admin" | Usuários autenticados (apenas ativos) | Apenas Admin | Apenas Admin | Apenas Admin |
+| `application_settings` | "Permitir para autenticados / admin" | Usuários autenticados (apenas ativos) | Apenas Admin | Apenas Admin | Apenas Admin |
+| `excuses` | "Permitir para próprio criador / admin" | Próprio Usuário ou Admin | Próprio Usuário ou Admin | Próprio Usuário ou Admin | Próprio Usuário ou Admin |
+| `audit_logs` | "Leitura para admin / escrita para autenticados" | Apenas Admin | Usuários autenticados (próprio id ou admin) | Bloqueado | Bloqueado |
+
